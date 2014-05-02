@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    id="org.xocialize.cordova.xocializescanner" version="0.0.2">
+	<name>xocialize_scanner</name>
+	<description>Barcode Scanner Plugin</description>
+	<license>Apache 2.0</license>
+	<keywords>cordova,barcode,Scanner</keywords>
+	<js-module src="www/XocializeScanner.js" name="xocializescanner">
+		<clobbers target="window.plugins.xocializescanner" />
+	</js-module>
+	<platform name="ios">
+        <framework src="Foundation.framework" />
+        <framework src="AVFoundation.framework" />
+        <framework src="UIKit.framework" />
+		<config-file target="config.xml" parent="/*">
+			<feature name="XocializeScanner">
+				<param name="ios-package" value="CDVXocializeScanner"/>
+			</feature>
+		</config-file>
+		<header-file src="src/ios/CDVXocializeScanner.h" />
+		<source-file src="src/ios/CDVXocializeScanner.m" />
+	</platform>
+</plugin>
