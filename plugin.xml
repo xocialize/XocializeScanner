@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     id="org.xocialize.cordova.xocializescanner" version="0.0.2">
-	<name>xocialize_scanner</name>
+	<name>XocializeScanner</name>
 	<description>Barcode Scanner Plugin</description>
 	<license>Apache 2.0</license>
 	<keywords>cordova,barcode,Scanner</keywords>
