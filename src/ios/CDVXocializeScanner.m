@@ -22,6 +22,9 @@
     
     UIView *_highlightView;
     UILabel *_label;
+    UINavigationBar *_navcon;
+    UINavigationItem *_navbutton;
+    UILabel *_navtitle;
 }
 
 @end
@@ -44,6 +47,38 @@
     _highlightView.layer.borderColor = [UIColor greenColor].CGColor;
     _highlightView.layer.borderWidth = 3;
     [self.webView.superview addSubview:_highlightView];
+    
+    
+    
+    _navcon = [[UINavigationBar alloc] init];
+    [_navcon setFrame:CGRectMake(0,0,CGRectGetWidth(self.webView.superview.frame),64)];
+    
+    _navtitle = [[UILabel alloc]initWithFrame:CGRectMake(0,10,CGRectGetWidth(self.webView.superview.frame),64)];
+    _navtitle.text = @"Scanner";
+    _navtitle.textAlignment = NSTextAlignmentCenter;
+    
+    // [_navcon addSubview: _navtitle];
+	
+    
+    
+    
+    UINavigationItem *navItem = [[UINavigationItem alloc] init];
+    navItem.title = @"Scanner";
+    
+    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleDone target:self action:@selector(closeView:)];
+    navItem.leftBarButtonItem = leftButton;
+    
+    /*
+    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(closeView:)];
+    navItem.rightBarButtonItem = rightButton;
+    */
+    
+    _navcon.items = @[ navItem ];
+    
+    [self.webView.superview addSubview:_navcon];
+    
+    
+    
     
     _label = [[UILabel alloc] init];
     _label.frame = CGRectMake(0, self.webView.superview.bounds.size.height - 40, self.webView.superview.bounds.size.width, 40);
@@ -80,6 +115,7 @@
     
     [self.webView.superview bringSubviewToFront:_highlightView];
     [self.webView.superview bringSubviewToFront:_label];
+    [self.webView.superview bringSubviewToFront:_navcon];
     
     //_barcode = @"testing works";
     
@@ -88,6 +124,20 @@
     _barcode = nil;
     
        
+}
+
+- (void) closeView :(id)sender{
+    
+    [_prevLayer performSelectorOnMainThread:@selector(removeFromSuperlayer) withObject:nil waitUntilDone:NO];
+    
+    [_highlightView performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+    
+    [_label performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+    
+    [_navtitle performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+    
+    [_navcon performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+    
 }
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
@@ -127,6 +177,10 @@
             [_highlightView performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
             
             [_label performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+            
+            [_navtitle performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+            
+            [_navcon performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
             
             break;
             
