@@ -89,8 +89,39 @@
     _label.text = @"Scanning";
     [self.webView.superview addSubview:_label];
     
+    if ([_session canSetSessionPreset:AVCaptureSessionPreset1920x1080])
+    {
+        _session.sessionPreset = AVCaptureSessionPreset1920x1080;
+    } else if ([_session canSetSessionPreset:AVCaptureSessionPreset640x480])
+    {
+        NSLog(@"Set preview port to 640X480");
+        _session.sessionPreset = AVCaptureSessionPreset640x480;
+    }
+    
+    
     _session = [[AVCaptureSession alloc] init];
     _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    
+    if ([_device respondsToSelector:@selector(setVideoZoomFactor:)]) {
+        if ([ _device lockForConfiguration:nil]) {
+            float zoomFactor = _device.activeFormat.videoZoomFactorUpscaleThreshold;
+            [_device setVideoZoomFactor:zoomFactor];
+            [_device unlockForConfiguration];
+        }
+    }
+    
+    // Locks the configuration
+    BOOL success = [_device lockForConfiguration:nil];
+    if (success) {
+        if ([_device isAutoFocusRangeRestrictionSupported]) {
+            // Restricts the autofocus to near range (new in iOS 7)
+            [_device setAutoFocusRangeRestriction:AVCaptureAutoFocusRangeRestrictionNear];
+        }
+        
+    }
+    // unlocks the configuration
+    [_device unlockForConfiguration];
+    
     NSError *error = nil;
     
     _input = [AVCaptureDeviceInput deviceInputWithDevice:_device error:&error];
@@ -152,9 +183,13 @@
     CGRect highlightViewRect = CGRectZero;
     AVMetadataMachineReadableCodeObject *barCodeObject;
     NSString *detectionString = nil;
+    /*
     NSArray *barCodeTypes = @[AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code, AVMetadataObjectTypeCode39Mod43Code,
                               AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code,
                               AVMetadataObjectTypePDF417Code, AVMetadataObjectTypeQRCode, AVMetadataObjectTypeAztecCode];
+    
+    */
+    NSArray *barCodeTypes = @[AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypePDF417Code, AVMetadataObjectTypeQRCode, AVMetadataObjectTypeAztecCode];
     
     for (AVMetadataObject *metadata in metadataObjects) {
         for (NSString *type in barCodeTypes) {
