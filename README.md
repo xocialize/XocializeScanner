@@ -41,7 +41,9 @@ CDV.XocializeScanner.getBC(params,function(data){
 The plugin returns an array with 3 elements 
 
 [0] The barcode
+
 [1] The barcode type
+
 [2] Status ( 0 = cancelled / 1 = success )
 
 Options
