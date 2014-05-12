@@ -47,7 +47,9 @@ The plugin returns an array with 3 elements
 Options
 =======
 
-By default the scanner will look for PDF417Code, QRCode	and EAN13Code.  You can override and return other barcodes supported by AV Foundation by sending in params.
+By default the scanner will look for PDF417Code, QRCode	and EAN13Code.  
+
+You can override and return other barcodes supported by AV Foundation by sending in params.
 
 ````
 
@@ -57,15 +59,27 @@ params.AztecCode = true;
 
 ````
 
+Inversely you can disable barcodes by using:
+
+````
+
+var params = {};
+		
+params.QRCode = false;
+
+````
+
+Or a combination of both:
+
+````
+
+var params = {};
+
+params.AztecCode = true;
+params.QRCode = false;
+
+````
+
 A list of available barcode types:
 
-PDF417Code
-QRCode
-EAN13Code
-UPCECode
-Code39Code
-Code39Mod43Code
-EAN8Code
-Code93Code
-Code128Code
-AztecCode
+PDF417Code, QRCode, EAN13Code, UPCECode, Code39Code, Code39Mod43Code, EAN8Code, Code93Code, Code128Code, AztecCode
