@@ -23,6 +23,9 @@
     
     NSString *_barcodetest;
     
+    NSMutableDictionary *_params;
+    
+    NSMutableDictionary *_results;
     
     
 }

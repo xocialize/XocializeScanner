@@ -42,6 +42,9 @@
 - (void) cordovaGetBC:(CDVInvokedUrlCommand *)command
 {
     
+    _params = [command.arguments objectAtIndex:0];
+    
+    
     _highlightView = [[UIView alloc] init];
     _highlightView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
     _highlightView.layer.borderColor = [UIColor greenColor].CGColor;
@@ -57,21 +60,11 @@
     _navtitle.text = @"Scanner";
     _navtitle.textAlignment = NSTextAlignmentCenter;
     
-    // [_navcon addSubview: _navtitle];
-	
-    
-    
-    
     UINavigationItem *navItem = [[UINavigationItem alloc] init];
     navItem.title = @"Scanner";
     
     UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleDone target:self action:@selector(closeView:)];
     navItem.leftBarButtonItem = leftButton;
-    
-    /*
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(closeView:)];
-    navItem.rightBarButtonItem = rightButton;
-    */
     
     _navcon.items = @[ navItem ];
     
@@ -152,9 +145,6 @@
     
     _barcodetest = command.callbackId;
     
-    _barcode = nil;
-    
-       
 }
 
 - (void) closeView :(id)sender{
@@ -169,7 +159,7 @@
     
     [_navcon performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
-    _barcode = @"Cancelled";
+    [_results setValue:@"cancelled" forKey:@"status"];
     
     CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: _barcode];
     
@@ -199,7 +189,9 @@
                 highlightViewRect = barCodeObject.bounds;
                 detectionString = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
                 
-                _barcode = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
+                [_results setValue:@"success" forKey:@"status"];
+                
+                [_results setValue:[(AVMetadataMachineReadableCodeObject *)metadata stringValue] forKey:@"barcode"];
                 
                 break;
             }
@@ -209,7 +201,7 @@
         {
             _label.text = detectionString;
             
-            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: _barcode];
+            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: _results];
             
             [self.commandDelegate sendPluginResult:pluginResult callbackId:_barcodetest];
             
