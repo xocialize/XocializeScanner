@@ -21,9 +21,13 @@
     
     NSString *_barcode;
     
-    NSString *_barcodetest;
+    NSString *_callback;
     
+    NSArray *_barCodeResults;
     
+    NSArray *_barCodeTypes;
+    
+    NSMutableDictionary *_results;
     
 }
 

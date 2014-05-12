@@ -117,11 +117,13 @@
     [self.webView.superview bringSubviewToFront:_label];
     [self.webView.superview bringSubviewToFront:_navcon];
     
-    //_barcode = @"testing works";
-    
-    _barcodetest = command.callbackId;
+    _callback = command.callbackId;
     
     _barcode = nil;
+    
+    _barCodeTypes = command.arguments;
+    
+    
     
        
 }
@@ -138,11 +140,11 @@
     
     [_navcon performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
-    _barcode = @"Cancelled";
+    _barCodeResults = @[@"",@"",@"0"];
     
-    CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: _barcode];
+    CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: _barCodeResults];
     
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:_barcodetest];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:_callback];
     
 }
 
@@ -152,19 +154,23 @@
     CGRect highlightViewRect = CGRectZero;
     AVMetadataMachineReadableCodeObject *barCodeObject;
     NSString *detectionString = nil;
-    NSArray *barCodeTypes = @[AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code, AVMetadataObjectTypeCode39Mod43Code,
-                              AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code,
-                              AVMetadataObjectTypePDF417Code, AVMetadataObjectTypeQRCode, AVMetadataObjectTypeAztecCode];
+    
     
     for (AVMetadataObject *metadata in metadataObjects) {
-        for (NSString *type in barCodeTypes) {
+        for (NSString *type in _barCodeTypes) {
+            
             if ([metadata.type isEqualToString:type])
             {
                 barCodeObject = (AVMetadataMachineReadableCodeObject *)[_prevLayer transformedMetadataObjectForMetadataObject:(AVMetadataMachineReadableCodeObject *)metadata];
                 highlightViewRect = barCodeObject.bounds;
+                
+                _highlightView.frame = highlightViewRect;
+                
                 detectionString = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
                 
                 _barcode = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
+                
+                _barCodeResults = @[_barcode,metadata.type,@"1"];
                 
                 break;
             }
@@ -174,9 +180,9 @@
         {
             _label.text = detectionString;
             
-            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: _barcode];
+            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray : _barCodeResults];
             
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:_barcodetest];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:_callback];
             
             [_prevLayer performSelectorOnMainThread:@selector(removeFromSuperlayer) withObject:nil waitUntilDone:NO];
             
@@ -195,7 +201,7 @@
             _label.text = @"Scanning";
     }
     
-    _highlightView.frame = highlightViewRect;
+    
 }
 
 @end
