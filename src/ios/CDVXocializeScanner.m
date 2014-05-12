@@ -10,8 +10,6 @@
 
 @class UIViewController;
 
-
-
 @interface CDVXocializeScanner () <AVCaptureMetadataOutputObjectsDelegate>
 {
     AVCaptureSession *_session;
@@ -20,16 +18,12 @@
     AVCaptureMetadataOutput *_output;
     AVCaptureVideoPreviewLayer *_prevLayer;
     
-    UIView *_highlightView;
     UILabel *_label;
     UINavigationBar *_navcon;
-    UINavigationItem *_navbutton;
     UILabel *_navtitle;
 }
 
 @end
-
-
 
 @implementation CDVXocializeScanner
 
@@ -42,25 +36,12 @@
 - (void) cordovaGetBC:(CDVInvokedUrlCommand *)command
 {
     
-    _highlightView = [[UIView alloc] init];
-    _highlightView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
-    _highlightView.layer.borderColor = [UIColor greenColor].CGColor;
-    _highlightView.layer.borderWidth = 3;
-    [self.webView.superview addSubview:_highlightView];
-    
-    
-    
-    _navcon = [[UINavigationBar alloc] init];
+     _navcon = [[UINavigationBar alloc] init];
     [_navcon setFrame:CGRectMake(0,0,CGRectGetWidth(self.webView.superview.frame),64)];
     
     _navtitle = [[UILabel alloc]initWithFrame:CGRectMake(0,10,CGRectGetWidth(self.webView.superview.frame),64)];
     _navtitle.text = @"Scanner";
     _navtitle.textAlignment = NSTextAlignmentCenter;
-    
-    // [_navcon addSubview: _navtitle];
-	
-    
-    
     
     UINavigationItem *navItem = [[UINavigationItem alloc] init];
     navItem.title = @"Scanner";
@@ -68,17 +49,9 @@
     UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleDone target:self action:@selector(closeView:)];
     navItem.leftBarButtonItem = leftButton;
     
-    /*
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(closeView:)];
-    navItem.rightBarButtonItem = rightButton;
-    */
-    
     _navcon.items = @[ navItem ];
     
     [self.webView.superview addSubview:_navcon];
-    
-    
-    
     
     _label = [[UILabel alloc] init];
     _label.frame = CGRectMake(0, self.webView.superview.bounds.size.height - 40, self.webView.superview.bounds.size.width, 40);
@@ -113,26 +86,18 @@
     
     [_session startRunning];
     
-    [self.webView.superview bringSubviewToFront:_highlightView];
     [self.webView.superview bringSubviewToFront:_label];
     [self.webView.superview bringSubviewToFront:_navcon];
     
     _callback = command.callbackId;
     
-    _barcode = nil;
-    
     _barCodeTypes = command.arguments;
     
-    
-    
-       
 }
 
 - (void) closeView :(id)sender{
     
     [_prevLayer performSelectorOnMainThread:@selector(removeFromSuperlayer) withObject:nil waitUntilDone:NO];
-    
-    [_highlightView performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
     [_label performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
@@ -151,10 +116,10 @@
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
 {
  
-    CGRect highlightViewRect = CGRectZero;
-    AVMetadataMachineReadableCodeObject *barCodeObject;
-    NSString *detectionString = nil;
     
+    AVMetadataMachineReadableCodeObject *barCodeObject;
+    
+    NSString *detectionString = nil;
     
     for (AVMetadataObject *metadata in metadataObjects) {
         for (NSString *type in _barCodeTypes) {
@@ -162,15 +127,10 @@
             if ([metadata.type isEqualToString:type])
             {
                 barCodeObject = (AVMetadataMachineReadableCodeObject *)[_prevLayer transformedMetadataObjectForMetadataObject:(AVMetadataMachineReadableCodeObject *)metadata];
-                highlightViewRect = barCodeObject.bounds;
-                
-                _highlightView.frame = highlightViewRect;
                 
                 detectionString = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
                 
-                _barcode = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
-                
-                _barCodeResults = @[_barcode,metadata.type,@"1"];
+                _barCodeResults = @[[(AVMetadataMachineReadableCodeObject *)metadata stringValue],metadata.type,@"1"];
                 
                 break;
             }
@@ -185,8 +145,6 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:_callback];
             
             [_prevLayer performSelectorOnMainThread:@selector(removeFromSuperlayer) withObject:nil waitUntilDone:NO];
-            
-            [_highlightView performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
             
             [_label performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
             

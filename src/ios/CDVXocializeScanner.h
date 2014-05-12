@@ -19,15 +19,11 @@
     
     UIView* parentView;
     
-    NSString *_barcode;
-    
     NSString *_callback;
     
     NSArray *_barCodeResults;
     
     NSArray *_barCodeTypes;
-    
-    NSMutableDictionary *_results;
     
 }
 
