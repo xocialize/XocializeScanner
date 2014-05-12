@@ -42,9 +42,6 @@
 - (void) cordovaGetBC:(CDVInvokedUrlCommand *)command
 {
     
-    _params = [command.arguments objectAtIndex:0];
-    
-    
     _highlightView = [[UIView alloc] init];
     _highlightView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
     _highlightView.layer.borderColor = [UIColor greenColor].CGColor;
@@ -60,11 +57,21 @@
     _navtitle.text = @"Scanner";
     _navtitle.textAlignment = NSTextAlignmentCenter;
     
+    // [_navcon addSubview: _navtitle];
+	
+    
+    
+    
     UINavigationItem *navItem = [[UINavigationItem alloc] init];
     navItem.title = @"Scanner";
     
     UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleDone target:self action:@selector(closeView:)];
     navItem.leftBarButtonItem = leftButton;
+    
+    /*
+    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(closeView:)];
+    navItem.rightBarButtonItem = rightButton;
+    */
     
     _navcon.items = @[ navItem ];
     
@@ -82,39 +89,8 @@
     _label.text = @"Scanning";
     [self.webView.superview addSubview:_label];
     
-    if ([_session canSetSessionPreset:AVCaptureSessionPreset1920x1080])
-    {
-        _session.sessionPreset = AVCaptureSessionPreset1920x1080;
-    } else if ([_session canSetSessionPreset:AVCaptureSessionPreset640x480])
-    {
-        NSLog(@"Set preview port to 640X480");
-        _session.sessionPreset = AVCaptureSessionPreset640x480;
-    }
-    
-    
     _session = [[AVCaptureSession alloc] init];
     _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    
-    if ([_device respondsToSelector:@selector(setVideoZoomFactor:)]) {
-        if ([ _device lockForConfiguration:nil]) {
-            float zoomFactor = _device.activeFormat.videoZoomFactorUpscaleThreshold;
-            [_device setVideoZoomFactor:zoomFactor];
-            [_device unlockForConfiguration];
-        }
-    }
-    
-    // Locks the configuration
-    BOOL success = [_device lockForConfiguration:nil];
-    if (success) {
-        if ([_device isAutoFocusRangeRestrictionSupported]) {
-            // Restricts the autofocus to near range (new in iOS 7)
-            [_device setAutoFocusRangeRestriction:AVCaptureAutoFocusRangeRestrictionNear];
-        }
-        
-    }
-    // unlocks the configuration
-    [_device unlockForConfiguration];
-    
     NSError *error = nil;
     
     _input = [AVCaptureDeviceInput deviceInputWithDevice:_device error:&error];
@@ -145,6 +121,9 @@
     
     _barcodetest = command.callbackId;
     
+    _barcode = nil;
+    
+       
 }
 
 - (void) closeView :(id)sender{
@@ -159,7 +138,7 @@
     
     [_navcon performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
-    [_results setValue:@"cancelled" forKey:@"status"];
+    _barcode = @"Cancelled";
     
     CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: _barcode];
     
@@ -173,13 +152,9 @@
     CGRect highlightViewRect = CGRectZero;
     AVMetadataMachineReadableCodeObject *barCodeObject;
     NSString *detectionString = nil;
-    /*
     NSArray *barCodeTypes = @[AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code, AVMetadataObjectTypeCode39Mod43Code,
                               AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code,
                               AVMetadataObjectTypePDF417Code, AVMetadataObjectTypeQRCode, AVMetadataObjectTypeAztecCode];
-    
-    */
-    NSArray *barCodeTypes = @[AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypePDF417Code, AVMetadataObjectTypeQRCode, AVMetadataObjectTypeAztecCode];
     
     for (AVMetadataObject *metadata in metadataObjects) {
         for (NSString *type in barCodeTypes) {
@@ -189,9 +164,7 @@
                 highlightViewRect = barCodeObject.bounds;
                 detectionString = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
                 
-                [_results setValue:@"success" forKey:@"status"];
-                
-                [_results setValue:[(AVMetadataMachineReadableCodeObject *)metadata stringValue] forKey:@"barcode"];
+                _barcode = [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
                 
                 break;
             }
@@ -201,7 +174,7 @@
         {
             _label.text = detectionString;
             
-            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: _results];
+            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: _barcode];
             
             [self.commandDelegate sendPluginResult:pluginResult callbackId:_barcodetest];
             
