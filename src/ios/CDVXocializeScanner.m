@@ -37,9 +37,9 @@
 {
     
      _navcon = [[UINavigationBar alloc] init];
-    [_navcon setFrame:CGRectMake(0,0,CGRectGetWidth(self.webView.superview.frame),64)];
+    [_navcon setFrame:CGRectMake(0,0,self.webView.superview.bounds.size.width,64)];
     
-    _navtitle = [[UILabel alloc]initWithFrame:CGRectMake(0,10,CGRectGetWidth(self.webView.superview.frame),64)];
+    _navtitle = [[UILabel alloc]initWithFrame:CGRectMake(0,10,self.webView.superview.bounds.size.width,64)];
     _navtitle.text = @"Scanner";
     _navtitle.textAlignment = NSTextAlignmentCenter;
     
