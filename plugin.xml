@@ -5,7 +5,7 @@
 	<description>Barcode Scanner Plugin</description>
 	<license>Apache 2.0</license>
 	<keywords>cordova,barcode,Scanner</keywords>
-	<js-module src="www/XocializeScanner.js" name="xocializescanner">
+	<js-module src="www/xocializescanner.js" name="xocializescanner">
 		<clobbers target="window.plugins.xocializescanner" />
 	</js-module>
     <engines>
