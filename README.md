@@ -8,6 +8,10 @@ Important
 
 This is a very basic barcode scanner and one of my very first plugins.  Much could be horribly wrong but at least it's working for me.  Feel free to fork and improve.
 
+Barcode scanning works best whith iPhone 4s or better and iPad 3 or better due to their higher density cameras.  
+
+If you need to scan barcodes for older devices try to use QRCode as it is better recognized by older devices.
+
 Installation
 ============
 
