@@ -38,7 +38,7 @@ CDV.XocializeScanner.getBC(params,function(data){
 
 ```
 
-The plugin returns an array with 3 elements 
+The plugin returns an array with 3 string elements: 
 
 [0] The barcode
 

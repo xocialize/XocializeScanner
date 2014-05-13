@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    id="org.xocialize.cordova.xocializescanner" version="0.0.2">
+    id="com.xocialize.cordova.xocializescanner" version="1.0.0">
 	<name>XocializeScanner</name>
 	<description>Barcode Scanner Plugin</description>
 	<license>Apache 2.0</license>
@@ -8,6 +8,9 @@
 	<js-module src="www/XocializeScanner.js" name="xocializescanner">
 		<clobbers target="window.plugins.xocializescanner" />
 	</js-module>
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
 	<platform name="ios">
         <framework src="Foundation.framework" />
         <framework src="AVFoundation.framework" />
