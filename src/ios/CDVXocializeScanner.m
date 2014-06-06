@@ -36,7 +36,7 @@
 - (void) cordovaGetBC:(CDVInvokedUrlCommand *)command
 {
     
-     _navcon = [[UINavigationBar alloc] init];
+    _navcon = [[UINavigationBar alloc] init];
     [_navcon setFrame:CGRectMake(0,0,self.webView.superview.bounds.size.width,64)];
     
     _navtitle = [[UILabel alloc]initWithFrame:CGRectMake(0,10,self.webView.superview.bounds.size.width,64)];
@@ -105,6 +105,20 @@
     
     [_navcon performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
+    [_session stopRunning];
+    
+    [_session removeOutput:_output];
+    
+    [_session removeInput:_input];
+    
+    _output = nil;
+    
+    _input = nil;
+    
+    _device = nil;
+    
+    _session = nil;
+    
     _barCodeResults = @[@"",@"",@"0"];
     
     CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray: _barCodeResults];
@@ -115,7 +129,7 @@
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
 {
- 
+    
     
     AVMetadataMachineReadableCodeObject *barCodeObject;
     
@@ -140,10 +154,6 @@
         {
             _label.text = detectionString;
             
-            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray : _barCodeResults];
-            
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:_callback];
-            
             [_prevLayer performSelectorOnMainThread:@selector(removeFromSuperlayer) withObject:nil waitUntilDone:NO];
             
             [_label performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
@@ -151,6 +161,24 @@
             [_navtitle performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
             
             [_navcon performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+            
+            [_session stopRunning];
+            
+            [_session removeOutput:_output];
+            
+            [_session removeInput:_input];
+            
+            _output = nil;
+            
+            _input = nil;
+            
+            _device = nil;
+            
+            _session = nil;
+            
+            CDVPluginResult *pluginResult=[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray : _barCodeResults];
+            
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:_callback];
             
             break;
             
