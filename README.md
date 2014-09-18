@@ -38,7 +38,7 @@ CDV.XocializeScanner.getBC(params,function(data){
         console.log('barcode: '+data[0]+' Type: '+data[1]);
 
     }
-}
+});
 
 ```
 
