@@ -29,8 +29,9 @@
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
-    self = (CDVXocializeScanner*)[super initWithWebView:theWebView];
-    return self;
+    //self = (CDVXocializeScanner*)[super initWithWebView:theWebView];
+    //return self;
+    [self pluginInitialize];
 }
 
 - (void) cordovaGetBC:(CDVInvokedUrlCommand *)command
